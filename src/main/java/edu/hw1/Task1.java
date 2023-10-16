@@ -11,11 +11,19 @@ public class Task1 {
 
         String[] tokenArray = videoDuration.split(":");
 
+        try {
+            long minutes = Long.parseLong(tokenArray[0]);
+            long seconds = Long.parseLong(tokenArray[1]);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
         if (Long.parseLong(tokenArray[1]) >= SECONDS_IN_MINUTE || Long.parseLong(tokenArray[0]) < 0
                 || Long.parseLong(tokenArray[1]) < 0 || tokenArray.length != 2) {
             return -1;
         }
 
+
         return Long.parseLong(tokenArray[1]) + Long.parseLong(tokenArray[0]) * SECONDS_IN_MINUTE;
     }
+
 }
