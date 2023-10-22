@@ -1,16 +1,11 @@
 package edu.project1;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Vector;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,23 +14,27 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class UnkownWordMethodsTest {
+public class UnknownWordMethodsTest {
 
     @ParameterizedTest(name = "#{index} - Run with args = {0}")
-    @ArgumentsSource(UnkownWordMethodsTest.TestArgumentsProvider.class)
+    @ArgumentsSource(UnknownWordMethodsTest.TestArgumentsProvider.class)
     @DisplayName("Checking checkLetterPositions efficiency")
-    void checkLetterTest() {
-        assertThat().isEqualTo();
+    void checkLetterTest(HiddenWord hiddenWord, char currentSymbol, boolean writeAnswer) {
+
+        try {
+            assertThat(new UnknownWord(hiddenWord).checkLetter(hiddenWord, currentSymbol)).isEqualTo(writeAnswer);
+        } catch (WordExceptions.WordHasThisLetterException wordHasThisLetterException) {
+            assertThat(true).isEqualTo(true);
+        }
     }
 
     static class TestArgumentsProvider implements ArgumentsProvider {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
             return Stream.of(
-                    Arguments.of('f', "tinkoff", new Vector<Integer>(Arrays.asList(5, 6))),
-                    Arguments.of('a', "java", new Vector<Integer>(Arrays.asList(1, 3))),
-                    Arguments.of('q', "computer", new Vector<Integer>()),
-                    Arguments.of('s', "science", new Vector<Integer>(Arrays.asList(0)))
+                    Arguments.of(new HiddenWord("java"), "a", true),
+                    Arguments.of(new HiddenWord("tinkoff"), "a", false),
+                    Arguments.of(new HiddenWord("science"), "f", false)
             );
         }
     }

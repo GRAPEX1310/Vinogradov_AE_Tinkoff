@@ -1,10 +1,8 @@
 package edu.project1;
 
+import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 
 public class Gallows {
 
@@ -28,6 +26,10 @@ public class Gallows {
             You couldn't guess the word and you`ve lost this game!
             Thank you for playing!""";
 
+    private final static String WRITE_WORD_STRING = "The write word is '";
+
+    private final static String LETTER_IS_STRING = "Letter '";
+
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Scanner SCANNER = new Scanner(System.in);
 
@@ -43,7 +45,7 @@ public class Gallows {
             gameRound(hiddenWord, unknownWord);
         } catch (WordExceptions.GameEndingException gameEndingException) {
             LOGGER.info("You chose to finish the game");
-            LOGGER.info("The write word is '" + hiddenWord.getWord() + "'.");
+            LOGGER.info(WRITE_WORD_STRING + hiddenWord.getWord() + "'.");
         }
     }
 
@@ -73,21 +75,21 @@ public class Gallows {
             }
 
             if (correctGuessing) {
-                LOGGER.info("Letter '" + currentSymbol + "' is in the hidden word. Good job");
+                LOGGER.info(LETTER_IS_STRING + currentSymbol + "' is in the hidden word. Good job");
             } else {
-                LOGGER.info("Letter '" + currentSymbol + "' is not in the hidden word. Try again");
+                LOGGER.info(LETTER_IS_STRING + currentSymbol + "' is not in the hidden word. Try again");
                 currentAttemptsCount--;
             }
 
             LOGGER.info(unknownWord.getWord());
 
-            if (isWordGuessed(unknownWord)) {
+            if (isWordGuessed(unknownWord.getWord())) {
                 LOGGER.info(CONGRATULATIONS);
                 return;
             }
         }
         LOGGER.info(LOOSER_MESSAGE);
-        LOGGER.info("The write word is '" + hiddenWord.getWord() + "'.");
+        LOGGER.info(WRITE_WORD_STRING + hiddenWord.getWord() + "'.");
     }
 
 
@@ -121,9 +123,9 @@ public class Gallows {
         }
     }
 
-    private boolean isWordGuessed(UnknownWord unknownWord) {
-        for (int iterator = 0; iterator < unknownWord.getWord().length(); iterator++) {
-            if (unknownWord.getWord().charAt(iterator) == '*') {
+    public boolean isWordGuessed(String currentWord) {
+        for (int iterator = 0; iterator < currentWord.length(); iterator++) {
+            if (currentWord.charAt(iterator) == '*') {
                 return false;
             }
         }
