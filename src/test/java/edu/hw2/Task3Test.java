@@ -1,5 +1,6 @@
 package edu.hw2;
 
+import edu.hw2.Task3.Task3;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
