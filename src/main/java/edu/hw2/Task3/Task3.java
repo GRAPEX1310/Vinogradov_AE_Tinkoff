@@ -6,16 +6,9 @@ import org.slf4j.LoggerFactory;
 public class Task3 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Task3.class);
-    private static final String SUCCESSFUL_CONNECTION = "Connection is established";
-    private static final String CLOSED_CONNECTION = "Connection was closed";
     private static final String CONNECTION_ERROR = "Connection error";
     private static final String CONNECTION_CLOSING_ERROR = "Connection closing was failed";
     private static final String ATTEMPTS_LIMIT_EXCEED = "Limit of attempts was exceeded";
-    private static final int PERCENT_100 = 100;
-    private static final int PERCENT_95 = 95;
-    private static final int PERCENT_10 = 10;
-
-
 
 
     public static final class PopularCommandExecutor {
