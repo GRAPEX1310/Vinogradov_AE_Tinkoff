@@ -11,8 +11,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class MazeBFSSearchTest {
 
     @Test
-    @DisplayName("Test mazeDFSSearch function")
-    void testMazeDFSSearch() {
+    @DisplayName("Test mazeBFSSearch function")
+    void testMazeBFSSearch() {
         Maze maze = new Maze(15, 15);
 
         maze.mazeMatrix = new int[][]{
