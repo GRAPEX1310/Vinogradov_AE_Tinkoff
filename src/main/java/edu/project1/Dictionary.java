@@ -2,6 +2,7 @@ package edu.project1;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Dictionary {
     public Dictionary() {
@@ -15,7 +16,8 @@ public class Dictionary {
     ));
 
     public String getRandomWord() {
-        int randomNumber = ((int) (Math.random() * NUMBERS_SYSTEM_SIZE)) % DICTIONARY.size();
+        Random random = new Random();
+        int randomNumber = random.nextInt(DICTIONARY.size());
         return DICTIONARY.get(randomNumber);
     }
 
