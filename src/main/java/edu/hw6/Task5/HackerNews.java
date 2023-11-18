@@ -61,7 +61,7 @@ public class HackerNews {
 
     public static String news(long id) {
         try (HttpClient client = HttpClient.newHttpClient()) {
-            createRequest(client, "https://hacker-news.firebaseio.com/v0/item/37570037.json", NEWS_FILENAME);
+            createRequest(client, "https://hacker-news.firebaseio.com/v0/item/"+ id +".json", NEWS_FILENAME);
 
             File file = new File(NEWS_FILENAME);
             String title = null;
