@@ -68,16 +68,17 @@ public class ReadWriteLockDatabaseRealizationTest {
     @Test
     @DisplayName("Test delete function")
     void testDelete() {
-        personDatabase.add(new Person(1, "wojak", "Moscow", "88005553535"));
-        personDatabase.add(new Person(2, "wojak", "Moscow", "88005553535"));
-        personDatabase.add(new Person(3, "wojak", "Moscow", "88005553535"));
-        personDatabase.add(new Person(4, "wojak", "Moscow", "88005553535"));
-        personDatabase.add(new Person(5, "wojak", "Moscow", "88005553535"));
-        personDatabase.add(new Person(6, "wojak", "Moscow", "88005553535"));
-        personDatabase.add(new Person(7, "wojak", "Moscow", "88005553535"));
-        personDatabase.add(new Person(8, "wojak", "Moscow", "88005553535"));
-        personDatabase.add(new Person(9, "wojak", "Moscow", "88005553535"));
-        personDatabase.add(new Person(10, "wojak", "Moscow", "88005553535"));
+
+        personDatabase.add(new Person(1, "wojak1", "Moscow1", "1234"));
+        personDatabase.add(new Person(2, "wojak2", "Moscow2", "0987"));
+        personDatabase.add(new Person(3, "wojak3", "Moscow3", "5673"));
+        personDatabase.add(new Person(4, "wojak4", "Moscow4", "2345"));
+        personDatabase.add(new Person(5, "wojak5", "Moscow5", "4576"));
+        personDatabase.add(new Person(6, "wojak6", "Moscow6", "1243"));
+        personDatabase.add(new Person(7, "wojak7", "Moscow7", "6534"));
+        personDatabase.add(new Person(8, "wojak8", "Moscow8", "8092"));
+        personDatabase.add(new Person(9, "wojak9", "Moscow9", "7891"));
+        personDatabase.add(new Person(10, "wojak10", "Moscow10", "7612"));
 
         Thread t1 = new Thread(() -> {
             personDatabase.delete(6);
@@ -95,6 +96,10 @@ public class ReadWriteLockDatabaseRealizationTest {
             personDatabase.delete(5);
         });
 
+
+        t1.start();
+        t2.start();
+
         try {
             t1.join();
             t2.join();
@@ -105,7 +110,7 @@ public class ReadWriteLockDatabaseRealizationTest {
         ReadWriteLockDatabaseRealization resultDB = (ReadWriteLockDatabaseRealization) personDatabase;
         int result = resultDB.size();
 
-        //assertThat(result).isEqualTo(0);
+        assertThat(result).isEqualTo(0);
     }
 
     @Test
