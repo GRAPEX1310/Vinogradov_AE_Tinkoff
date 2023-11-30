@@ -1,7 +1,7 @@
 package edu.hw4;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,6 +43,10 @@ public class Tasks {
 
     //Task4
     public static TaskClasses.Animal findAnimalWithLongestName(List<TaskClasses.Animal> givenList) {
+
+        if (givenList.isEmpty()) {
+            return null;
+        }
 
         TaskClasses.Animal animalWithLongestName = givenList.get(0);
 
@@ -91,40 +95,31 @@ public class Tasks {
 
     //Task7
     public static TaskClasses.Animal findKOldestAnimal(List<TaskClasses.Animal> givenList, int k) {
-        TaskClasses.Animal resultAnimal;
-        List<TaskClasses.Animal> newAnimalList = new ArrayList<>(List.copyOf(givenList));
 
-        newAnimalList.sort(Comparator.comparingInt(TaskClasses.Animal::age));
-        newAnimalList = newAnimalList.reversed();
-
-        if (k > newAnimalList.size()) {
-            resultAnimal = newAnimalList.get(0);
-        } else {
-            resultAnimal = newAnimalList.get(k - 1);
+        if (givenList.isEmpty()) {
+            return null;
         }
 
-        return resultAnimal;
+        return givenList.stream()
+                .sorted(Collections.reverseOrder(Comparator.comparing(TaskClasses.Animal::age)))
+                .limit(k)
+                .toList()
+                .getLast();
     }
 
     //Task8
-    public static Optional<TaskClasses.Animal> findHeaviestAnimalWithOptionalHeight(
-            List<TaskClasses.Animal> givenList, int optionalHeight) {
+    public static Optional<TaskClasses.Animal> findHeaviestAnimalAmongLessSomeHeight(
+            List<TaskClasses.Animal> givenList, int height) {
 
-        List<TaskClasses.Animal> newAnimalList = new ArrayList<>(
-                givenList.stream().filter(it -> it.height() < optionalHeight).toList());
-
-        newAnimalList.sort(Comparator.comparingInt(TaskClasses.Animal::weight));
-
-        if (newAnimalList.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(newAnimalList.get(newAnimalList.size() - 1));
+        return Optional.of(givenList.stream()
+                .filter(element -> element.height() < height)
+                .max(Comparator.comparing(TaskClasses.Animal::weight))
+                .get());
     }
 
     //Task9
     public static Integer animalsPawsCounter(List<TaskClasses.Animal> givelList) {
-        return Arrays.stream(givelList.toArray(new TaskClasses.Animal[0])).mapToInt(TaskClasses.Animal::paws).sum();
+        return givelList.stream().mapToInt(TaskClasses.Animal::paws).sum();
     }
 
     //Task10
@@ -141,51 +136,47 @@ public class Tasks {
 
     //Task12
     public static Integer countAnimalsWhichWeightHigherHeight(List<TaskClasses.Animal> givenList) {
-        return givenList.stream().filter(it -> it.weight() > it.height()).collect(Collectors.toList()).size();
+        return givenList.stream().filter(it -> it.weight() > it.height()).toList().size();
     }
 
     //Task13
     public static List<TaskClasses.Animal> findAnimalsWithNamesLonger2Words(List<TaskClasses.Animal> givenList) {
-        return givenList.stream().filter(it -> it.name().contains(" ")).collect(Collectors.toList());
+        return givenList.stream()
+                .filter(it -> {
+                    return it.name().trim().split(" ").length > 2;
+                })
+                .toList();
     }
 
     //Task14
     public static Boolean isInListDogLongerK(List<TaskClasses.Animal> givenList, int k) {
-
-        for (TaskClasses.Animal animal : givenList) {
-            if (animal.type() == TaskClasses.Animal.Type.DOG && animal.height() > k) {
-                return true;
-            }
-        }
-
-        return false;
+        return !givenList.stream()
+                .filter(it -> it.type().equals(TaskClasses.Animal.Type.DOG) && it.height() > k)
+                .toList()
+                .isEmpty();
     }
 
     //Task15
-    public static Integer sumOfWeightWithBorders(List<TaskClasses.Animal> givenList, int k, int l) {
-        return Arrays.stream(givenList.toArray(new TaskClasses.Animal[0]))
-                .filter(it -> it.age() >= k && it.age() <= l).mapToInt(TaskClasses.Animal::weight).sum();
+    public static Integer sumOfWeightWithAgeBorders(List<TaskClasses.Animal> givenList, int minAge, int maxAge) {
+        return givenList.stream()
+                .filter(it -> it.age() >= minAge && it.age() <= maxAge)
+                .mapToInt(TaskClasses.Animal::weight)
+                .sum();
     }
 
     //Task16
-    public static List<TaskClasses.Animal> strangeAnimalsSort(List<TaskClasses.Animal> givenList) {
-        List<TaskClasses.Animal> newAnimalsList = new ArrayList<>(List.copyOf(givenList));
-        newAnimalsList.sort(new Comparator<TaskClasses.Animal>() {
-            @Override
-            public int compare(TaskClasses.Animal o1, TaskClasses.Animal o2) {
-                if (!o1.type().equals(o2.type())) {
-                    return o1.type().toString().compareTo(o2.type().toString());
-                } else {
-                    if (!o1.sex().equals(o2.sex())) {
-                        return o1.sex().toString().compareTo(o2.sex().toString());
+    public static List<TaskClasses.Animal> sortByTypeThenSexThenName(List<TaskClasses.Animal> givenList) {
+        return givenList.stream().sorted(((o1, o2) -> {
+                    if (!o1.type().equals(o2.type())) {
+                        return o1.type().toString().compareTo(o2.type().toString());
                     } else {
-                        return o1.name().compareTo(o2.name());
+                        if (!o1.sex().equals(o2.sex())) {
+                            return o1.sex().toString().compareTo(o2.sex().toString());
+                        } else {
+                            return o1.name().compareTo(o2.name());
                     }
                 }
-            }
-        });
-
-        return newAnimalsList;
+        })).toList();
     }
 
     //Task17
@@ -222,6 +213,11 @@ public class Tasks {
     //Task18
     @SafeVarargs
     public static TaskClasses.Animal findHeaviestFish(List<TaskClasses.Animal>... givenLists) {
+
+        if (givenLists.length == 0) {
+            return null;
+        }
+
         TaskClasses.Animal result = givenLists[0].get(0);
 
         for (List<TaskClasses.Animal> animalsList : givenLists) {
