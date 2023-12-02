@@ -2,6 +2,7 @@ package edu.hw5;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
@@ -10,9 +11,10 @@ import java.util.Date;
 
 public class Task2 {
 
-    private static final int SCARY_NUMBER = 13;
+    private static final int SCARY_DAY_NUMBER = 13;
+    private static final int NUMBER_OF_MONTHS = 12;
     private static final int YEAR_SUMMAND = 1900;
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private Task2() {
 
@@ -23,11 +25,12 @@ public class Task2 {
         Calendar calendar = Calendar.getInstance();
         int currentMonth = 0;
 
-        while (currentMonth < SCARY_NUMBER - 1) {
-            calendar.set(year, currentMonth, SCARY_NUMBER);
+        while (currentMonth <= NUMBER_OF_MONTHS) {
+            calendar.set(year, currentMonth, SCARY_DAY_NUMBER);
 
             if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
-                resultArray.add(DATE_FORMAT.format(new Date(year - YEAR_SUMMAND, currentMonth, SCARY_NUMBER)));
+                LocalDate scaryDate = LocalDate.of(year, currentMonth + 1, SCARY_DAY_NUMBER);
+                resultArray.add(scaryDate.format(DATE_TIME_FORMATTER));
             }
 
             currentMonth++;

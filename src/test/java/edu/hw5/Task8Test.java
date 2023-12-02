@@ -96,6 +96,7 @@ public class Task8Test {
                     Arguments.of("10", false),
                     Arguments.of("123", false),
                     Arguments.of("111", false),
+                    Arguments.of("1111", true),
                     Arguments.of("00", false),
                     Arguments.of(null, false)
             );

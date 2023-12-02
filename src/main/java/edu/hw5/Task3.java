@@ -15,11 +15,7 @@ public class Task3 {
         DateParser dateParser = getParsersChain();
         LocalDate resultDate = dateParser.stringTransform(givenDate);
 
-        if (resultDate == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(resultDate);
-        }
+        return Optional.ofNullable(resultDate);
     }
 
     private static DateParser getParsersChain() {

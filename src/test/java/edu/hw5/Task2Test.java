@@ -34,7 +34,8 @@ public class Task2Test {
             return Stream.of(
                     Arguments.of(2023, "[2023-01-13, 2023-10-13]"),
                     Arguments.of(2004, "[2004-02-13, 2004-08-13]"),
-                    Arguments.of(2020, "[2020-03-13, 2020-11-13]")
+                    Arguments.of(2020, "[2020-03-13, 2020-11-13]"),
+                    Arguments.of(2019, "[2019-09-13, 2019-12-13]")
             );
         }
     }
