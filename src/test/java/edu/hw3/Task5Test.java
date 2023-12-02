@@ -28,15 +28,12 @@ public class Task5Test {
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
                     Arguments.of(
-                            new ArrayList<>(Arrays.asList("John Locke", "Thomas Aquinas",
-                                    "David Hume", "Rene Descartes")),
+                            new ArrayList<>(Arrays.asList("John Locke", "Thomas Aquinas", "David Hume", "Rene Descartes")),
                             "ASC", "[Thomas Aquinas, Rene Descartes, David Hume, John Locke]"),
-                    Arguments.of(new ArrayList<>(Arrays.asList("Paul Erdos", "Leonhard Euler", "Carl Gauss")),
-                            "DESC", "[Carl Gauss, Leonhard Euler, Paul Erdos]"),
-                    Arguments.of(new ArrayList<>(Arrays.asList()),
-                            "DESC", "[]"),
-                    Arguments.of(null,
-                            "DESC", "[]")
+                    Arguments.of(new ArrayList<>(Arrays.asList("Paul Erdos", "Leonhard Euler", "Carl Gauss")), "DESC", "[Carl Gauss, Leonhard Euler, Paul Erdos]"),
+                    Arguments.of(new ArrayList<>(Arrays.asList("Bob", "Alex", "Paul", "Carl")), "ASC", "[Alex, Bob, Carl, Paul]"),
+                    Arguments.of(new ArrayList<>(Arrays.asList()), "DESC", "[]"),
+                    Arguments.of(null, "DESC", "[]")
             );
         }
     }

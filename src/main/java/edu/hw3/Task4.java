@@ -17,7 +17,14 @@ public class Task4 {
 
     public static String convertToRoman(int givenNumber) {
         StringBuilder resultRomanNumber = new StringBuilder();
-        int digits = Integer.toString(givenNumber).length();
+
+        int digits = 0;
+        int num = givenNumber;
+
+        while (num > 0) {
+            digits++;
+            num /= BASE;
+        }
 
         int number = givenNumber;
 

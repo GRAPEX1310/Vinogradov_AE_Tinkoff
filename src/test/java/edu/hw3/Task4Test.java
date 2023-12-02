@@ -26,8 +26,17 @@ public class Task4Test {
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
                     Arguments.of(2, "II"),
+                    Arguments.of(14, "XIV"),
+                    Arguments.of(19, "XIX"),
+                    Arguments.of(41, "XLI"),
+                    Arguments.of(44, "XLIV"),
+                    Arguments.of(49, "XLIX"),
                     Arguments.of(88, "LXXXVIII"),
+                    Arguments.of(99, "XCIX"),
+                    Arguments.of(101, "CI"),
                     Arguments.of(999, "CMXCIX"),
+                    Arguments.of(1111, "MCXI"),
+                    Arguments.of(2517, "MMDXVII"),
                     Arguments.of(3999, "MMMCMXCIX")
             );
         }

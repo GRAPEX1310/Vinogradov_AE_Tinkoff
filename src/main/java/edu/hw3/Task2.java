@@ -10,26 +10,25 @@ public class Task2 {
     public static ArrayList<String> clusterize(String givenString) {
         ArrayList<String> resultArray = new ArrayList<>();
 
-        int bracketsCounter = 0;
-        char[] lettersArray = givenString.toCharArray();
+        int brackersCounter = 0;
+
         StringBuilder currentString = new StringBuilder();
 
-        for (int i = 0; i < lettersArray.length; i++) {
-            if (lettersArray[i] == '(') {
-                bracketsCounter++;
+        for (int index = 0; index < givenString.length(); index++) {
+            if (givenString.charAt(index) == '(') {
+                brackersCounter++;
             } else {
-                bracketsCounter--;
+                brackersCounter--;
             }
 
-            currentString.append(lettersArray[i]);
+            currentString.append(givenString.charAt(index));
 
-            if (bracketsCounter == 0) {
-                resultArray.add(new String(currentString));
+            if (brackersCounter == 0) {
+                resultArray.add(currentString.toString());
                 currentString.delete(0, currentString.length());
             }
         }
 
         return resultArray;
     }
-
 }

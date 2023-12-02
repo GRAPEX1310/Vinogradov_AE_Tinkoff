@@ -12,33 +12,33 @@ public class Task5 {
             return new ArrayList<>();
         }
 
-        ArrayList<String> resultArray = new ArrayList<>();
+        ArrayList<String> resultArray = new ArrayList<>(givenArray);
 
         for (int index = 0; index < givenArray.size(); index++) {
             String currentString = givenArray.get(index);
-            String[] tokenArray = currentString.split(" ");
+            String[] tokenArray = currentString.trim().split(" ");
             if (tokenArray.length == 2) {
                 String newString = tokenArray[1] + " " + tokenArray[0];
-                givenArray.set(index, newString);
+                resultArray.set(index, newString);
             }
         }
 
         if (sortType.equals("ASC")) {
-            Collections.sort(givenArray);
+            Collections.sort(resultArray);
         } else {
-            givenArray.sort(Collections.reverseOrder());
+            resultArray.sort(Collections.reverseOrder());
         }
 
-        for (int index = 0; index < givenArray.size(); index++) {
-            String currentString = givenArray.get(index);
+        for (int index = 0; index < resultArray.size(); index++) {
+            String currentString = resultArray.get(index);
             String[] tokenArray = currentString.split(" ");
             if (tokenArray.length == 2) {
                 String newString = tokenArray[1] + " " + tokenArray[0];
-                givenArray.set(index, newString);
+                resultArray.set(index, newString);
             }
         }
 
-        return givenArray;
+        return resultArray;
     }
 
 }

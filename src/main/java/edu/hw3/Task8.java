@@ -1,26 +1,28 @@
 package edu.hw3;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class Task8 {
     private Task8() {
     }
 
-    static class BackwardIterator<T> {
-        private Collection<T> collection;
-        private int index;
+    public static class BackwardIterator<T> {
+        private final List<T> internalCollection;
+        private int currentIndex;
 
-        BackwardIterator(Collection<T> iternalCollection) {
-            collection = iternalCollection;
-            index = iternalCollection.size() - 1;
+        public BackwardIterator(Collection<T> receivedCollection) {
+            internalCollection = new ArrayList<>(receivedCollection);
+            currentIndex = receivedCollection.size() - 1;
         }
 
         public boolean hasNext() {
-            return index >= 0 && collection.toArray()[index] != null;
+            return currentIndex >= 0;
         }
 
         public T next() {
-            return (T) collection.toArray()[index--];
+            return internalCollection.get(currentIndex--);
         }
     }
 }
