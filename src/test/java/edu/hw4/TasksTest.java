@@ -236,7 +236,7 @@ public class TasksTest {
         assertThat(resultMap.get("a1")).isEqualTo("type- is null\n");
         assertThat(resultMap.get("a2")).isEqualTo("sex- is null\n");
         assertThat(resultMap.get("a3")).isEqualTo("age- is negate\n");
-        assertThat(resultMap.get("a4")).isEqualTo("height- is zero\nweight- is zero\n");
+        assertThat(resultMap.get("a4")).isEqualTo("weight- is zero\nheight- is zero\n");
         assertThat(resultMap.get("a5")).isEqualTo("weight- is negate\n");
 
     }

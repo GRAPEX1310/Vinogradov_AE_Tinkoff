@@ -232,35 +232,25 @@ public class Tasks {
     }
 
     //Task19
-    public static Map<String, Set<ValidationError>> findErrorsWithAnimals(List<TaskClasses.Animal> givenList)
-            throws NoSuchFieldError, IllegalAccessException {
-
-        ArrayList<String> fieldsNamesArray = new ArrayList<>(List.of("name", "type", "sex", "age", "height", "weight"));
+    public static Map<String, Set<ValidationError>> findErrorsWithAnimals(List<TaskClasses.Animal> givenList) {
         Map<String, Set<ValidationError>> errorsMap = new HashMap<>();
 
         for (TaskClasses.Animal animal : givenList) {
-            Set<ValidationError> errorsSet = new HashSet<>();
 
-            for (String field : fieldsNamesArray) {
-                try {
-                    errorsSet.add(new ValidationError(animal, field));
-                } catch (IllegalAccessException | NoSuchFieldException operationException) {
+            List<ValidationError> errorList = Validator.validate(animal);
 
-                }
-            }
+            Set<ValidationError> errorsSet = new HashSet<>(errorList);
 
             if (!errorsSet.isEmpty()) {
                 errorsMap.put(animal.name(), errorsSet);
             }
-
         }
-        return errorsMap;
+
+        return  errorsMap;
     }
 
     //Task20
-    public static Map<String, String> findErrorsWithAnimalsWithStrings(List<TaskClasses.Animal> givenList)
-            throws NoSuchFieldError, IllegalAccessException {
-
+    public static Map<String, String> findErrorsWithAnimalsWithStrings(List<TaskClasses.Animal> givenList) {
         Map<String, Set<ValidationError>> errorsMap = findErrorsWithAnimals(givenList);
         Map<String, String> resultMap = new HashMap<>();
 
@@ -270,9 +260,10 @@ public class Tasks {
             for (ValidationError error : element.getValue()) {
                 errorString.append(error.getMessage());
             }
-            resultMap.put(element.getKey(), errorString.toString());
 
+            resultMap.put(element.getKey(), errorString.toString());
         }
+
         return resultMap;
     }
 }
