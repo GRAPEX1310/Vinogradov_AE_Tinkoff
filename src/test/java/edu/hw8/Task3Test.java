@@ -1,18 +1,20 @@
 package edu.hw8;
 
-
 import edu.hw8.Task3.LinearPasswordHack;
 import edu.hw8.Task3.MultiThreadPasswordHack;
 import edu.hw8.Task3.PasswordHack;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class Task3Test {
+
+    private static final Logger LOGGER = LogManager.getLogger();
     @Test
     @DisplayName("Password hacks check")
     void testPasswordHack() {
@@ -36,8 +38,8 @@ public class Task3Test {
         long t2 = System.currentTimeMillis() - t2Start;
 
 
-        System.out.println(t1);
-        System.out.println(t2);
+        LOGGER.info("Difference: " + (t1 - t2));
+
         assertThat(resultLinear).isEqualTo(resultMultiThread);
         assertThat(resultLinear.size()).isEqualTo(3);
     }

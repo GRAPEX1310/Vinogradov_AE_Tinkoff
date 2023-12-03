@@ -17,6 +17,7 @@ public class Task2Test {
     @DisplayName("Personal fixedThreadPool check")
     void testPersonalFixedThreadPool() throws Exception {
         FixedThreadPool fixedThreadPool = new FixedThreadPool();
+        fixedThreadPool.create(6);
 
         List<Integer> fibonacciNumbers = new ArrayList<>(Collections.nCopies(13, -1));
 

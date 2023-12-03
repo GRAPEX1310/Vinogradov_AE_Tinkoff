@@ -7,16 +7,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FixedThreadPool implements ThreadPool {
     private static final Queue<Runnable> TASKS = new ArrayDeque<>();
 
-    private static final int THREADS_AMOUNT = 6;
+    private static int threadsAmount;
     private static final AtomicBoolean IS_CLOSED = new AtomicBoolean(true);
-
-    public FixedThreadPool() {
-        IS_CLOSED.set(false);
-    }
 
     @Override
     public void start() {
-        for (int index = 0; index < THREADS_AMOUNT; index++) {
+        for (int index = 0; index < threadsAmount; index++) {
             PersonalThread thread = new PersonalThread(this);
             thread.start();
         }
@@ -33,6 +29,11 @@ public class FixedThreadPool implements ThreadPool {
     public synchronized void close() throws Exception {
         IS_CLOSED.set(true);
         TASKS.clear();
+    }
+
+    public void create(int threadsAmount) {
+        FixedThreadPool.threadsAmount = threadsAmount;
+        FixedThreadPool.IS_CLOSED.set(false);
     }
 
     public boolean allTasksCompleted() {
