@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
 
-public class DFSMazeGenerator {
+public class DFSMazeGenerator implements  MazeGenerator {
 
-    private DFSMazeGenerator() {
+    public DFSMazeGenerator() {
 
     }
 
-    public static void mazeGenerate(Maze maze) {
+    @Override
+    public void mazeGenerate(Maze maze) {
         int[][] resultMazeMatrix = new int[maze.width()][maze.height()];
         boolean[][] visited = new boolean[maze.width()][maze.height()];
 

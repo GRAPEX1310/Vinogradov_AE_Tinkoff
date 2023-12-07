@@ -3,6 +3,7 @@ package edu.project2;
 import edu.project2.Maze.Maze;
 import edu.project2.Maze.MazeCell;
 import edu.project2.MazeSolvers.MazeDFSSearch;
+import edu.project2.MazeSolvers.MazeSolver;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -57,6 +58,7 @@ public class MazeDFSSearchTest {
 
         MazeCell start = new MazeCell(1, 1);
         MazeCell finish = new MazeCell(13, 13);
-        assertThat(MazeDFSSearch.mazeDFSSearch(start, finish, maze)).isEqualTo(solvedMatrix);
+        MazeSolver mazeSolver = new MazeDFSSearch();
+        assertThat(mazeSolver.mazeSearch(start, finish, maze)).isEqualTo(solvedMatrix);
     }
 }

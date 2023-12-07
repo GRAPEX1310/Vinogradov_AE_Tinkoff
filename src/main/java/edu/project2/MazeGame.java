@@ -1,11 +1,14 @@
 package edu.project2;
 
 import edu.project2.Generators.DFSMazeGenerator;
+import edu.project2.Generators.MazeGenerator;
 import edu.project2.Maze.Maze;
 import edu.project2.Maze.MazeCell;
+import edu.project2.MazeRenders.ConsoleMazeRender;
+import edu.project2.MazeRenders.MazeRender;
 import edu.project2.MazeSolvers.MazeBFSSearch;
 import edu.project2.MazeSolvers.MazeDFSSearch;
-import java.util.ArrayList;
+import edu.project2.MazeSolvers.MazeSolver;
 import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,11 +42,6 @@ public class MazeGame {
             ====SOLVED MAZE====
             """;
 
-    private static final String WALL = "███";
-    private static final String EMPTY_PASSAGE = "   ";
-    private static final String TRACE = " ● ";
-
-
     private static final Logger LOGGER = LogManager.getLogger(MazeGame.class);
     private static final Scanner SCANNER = new Scanner(System.in);
 
@@ -61,29 +59,32 @@ public class MazeGame {
         MazeCell finishCell = new MazeCell(mazeFinishCell[0], mazeFinishCell[1]);
 
         Maze maze = new Maze(mazeSize[0], mazeSize[1]);
-        DFSMazeGenerator.mazeGenerate(maze);
-        mazeRender(maze.mazeMatrix);
+        MazeGenerator mazeGenerator = new DFSMazeGenerator();
+        mazeGenerator.mazeGenerate(maze);
+        MazeRender mazeRender = new ConsoleMazeRender();
+        mazeRender.mazePrint(maze.mazeMatrix);
 
         int[][] solvedMaze = mazeSolving(maze, startCell, finishCell);
-        mazeRender(solvedMaze);
-
+        mazeRender.mazePrint(solvedMaze);
     }
 
     public static int[][] mazeSolving(Maze maze, MazeCell startCell, MazeCell finishCell) {
         LOGGER.info(CHOOSE_SOLVER_TYPE);
         int mazeSolverType = SCANNER.nextInt();
 
+        MazeSolver mazeSolver;
         int[][] solvedMaze = new int[0][0];
         switch (mazeSolverType) {
             case 0:
-                solvedMaze = MazeBFSSearch.mazeBFSSearch(startCell, finishCell, maze);
-                break;
-            case 1:
-                solvedMaze = MazeDFSSearch.mazeDFSSearch(startCell, finishCell, maze);
+                mazeSolver = new MazeBFSSearch();
                 break;
             default:
+                mazeSolver = new MazeDFSSearch();
                 break;
         }
+
+        solvedMaze = mazeSolver.mazeSearch(startCell, finishCell, maze);
+
         return solvedMaze;
     }
 
@@ -97,30 +98,5 @@ public class MazeGame {
         mazeStats[1] = value2;
 
         return mazeStats;
-    }
-
-    public static ArrayList<String> mazeRender(int[][] mazeMatrix) {
-        ArrayList<String> renderMazeMatrix = new ArrayList<>();
-        for (int[] line : mazeMatrix) {
-            String mazeLine = createMazeLine(line);
-            LOGGER.info(mazeLine);
-            renderMazeMatrix.add(mazeLine);
-        }
-        return renderMazeMatrix;
-    }
-
-    private static String createMazeLine(int[] mazeLine) {
-        StringBuilder resultMazeLine = new StringBuilder();
-
-        for (int mazeCell : mazeLine) {
-            if (mazeCell == 1) {
-                resultMazeLine.append(WALL);
-            } else if (mazeCell == 2) {
-                resultMazeLine.append(TRACE);
-            } else {
-                resultMazeLine.append(EMPTY_PASSAGE);
-            }
-        }
-        return resultMazeLine.toString();
     }
 }

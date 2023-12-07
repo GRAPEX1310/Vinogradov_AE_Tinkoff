@@ -7,15 +7,16 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MazeBFSSearch {
-    private MazeBFSSearch() {
+public class MazeBFSSearch implements MazeSolver {
+    public MazeBFSSearch() {
 
     }
 
     private static final int TRACE_CODE = 2;
     private static final int WALL_CODE = 1;
 
-    public static int[][] mazeBFSSearch(MazeCell begin, MazeCell end, Maze maze) {
+    @Override
+    public int[][] mazeSearch(MazeCell begin, MazeCell end, Maze maze) {
 
         int[][] visited = new int[maze.width()][maze.height()];
         for (int i = 0; i < maze.width(); i++) {

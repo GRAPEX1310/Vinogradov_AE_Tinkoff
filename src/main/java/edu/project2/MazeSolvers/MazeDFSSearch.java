@@ -5,15 +5,16 @@ import edu.project2.Maze.MazeCell;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MazeDFSSearch {
-    private MazeDFSSearch() {
+public class MazeDFSSearch implements MazeSolver {
+    public MazeDFSSearch() {
 
     }
 
     private static final int TRACE_CODE = 2;
     private static final int WALL_CODE = 1;
 
-    public static int[][] mazeDFSSearch(MazeCell begin, MazeCell end, Maze maze) {
+    @Override
+    public int[][] mazeSearch(MazeCell begin, MazeCell end, Maze maze) {
 
         int[][] visited = new int[maze.width()][maze.height()];
         for (int i = 0; i < maze.width(); i++) {

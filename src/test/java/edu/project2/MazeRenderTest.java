@@ -2,6 +2,8 @@ package edu.project2;
 
 import edu.project2.Maze.Maze;
 import edu.project2.Maze.MazeCell;
+import edu.project2.MazeRenders.ConsoleMazeRender;
+import edu.project2.MazeRenders.MazeRender;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +12,7 @@ import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class MazeGameMethodsTest {
+public class MazeRenderTest {
     @Test
     @DisplayName("Test mazeRender function")
     void testMazeRender() {
@@ -53,7 +55,8 @@ public class MazeGameMethodsTest {
                 "█████████████████████████████████████████████"
         ));
 
-        assertThat(MazeGame.mazeRender(maze.mazeMatrix)).isEqualTo(correctMaze);
+        MazeRender mazeRender = new ConsoleMazeRender();
+        assertThat(mazeRender.mazePrint(maze.mazeMatrix)).isEqualTo(correctMaze);
     }
 
     @Test
@@ -102,6 +105,7 @@ public class MazeGameMethodsTest {
         MazeCell start = new MazeCell(1, 1);
         MazeCell finish = new MazeCell(13, 13);
 
-        assertThat(MazeGame.mazeRender(maze.mazeMatrix)).isEqualTo(correctMaze);
+        MazeRender mazeRender = new ConsoleMazeRender();
+        assertThat(mazeRender.mazePrint(maze.mazeMatrix)).isEqualTo(correctMaze);
     }
 }
