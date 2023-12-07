@@ -10,4 +10,5 @@ public class Main {
         MazeGame mazeGame = new MazeGame();
         mazeGame.startMazeGenerate();
     }
+
 }
