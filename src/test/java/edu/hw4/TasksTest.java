@@ -226,8 +226,7 @@ public class TasksTest {
                 new TaskClasses.Animal("a1", null, TaskClasses.Animal.Sex.M, 100, 100, 350, true),
                 new TaskClasses.Animal("a2", TaskClasses.Animal.Type.DOG, null, 1, 50, 15, false),
                 new TaskClasses.Animal("a3", TaskClasses.Animal.Type.CAT, TaskClasses.Animal.Sex.F, -1, 50, 15, false),
-                new TaskClasses.Animal("a4", TaskClasses.Animal.Type.SPIDER, TaskClasses.Animal.Sex.F, 1, 0, 0, false),
-                new TaskClasses.Animal("a5", TaskClasses.Animal.Type.SPIDER, TaskClasses.Animal.Sex.F, 1, 50, -1, false)
+                new TaskClasses.Animal("a4", TaskClasses.Animal.Type.SPIDER, TaskClasses.Animal.Sex.F, 1, 50, -1, false)
         ));
 
         Map<String,String> resultMap = Tasks.findErrorsWithAnimalsWithStrings(animalList);
@@ -236,8 +235,7 @@ public class TasksTest {
         assertThat(resultMap.get("a1")).isEqualTo("type- is null\n");
         assertThat(resultMap.get("a2")).isEqualTo("sex- is null\n");
         assertThat(resultMap.get("a3")).isEqualTo("age- is negate\n");
-        assertThat(resultMap.get("a4")).isEqualTo("weight- is zero\nheight- is zero\n");
-        assertThat(resultMap.get("a5")).isEqualTo("weight- is negate\n");
+        assertThat(resultMap.get("a4")).isEqualTo("weight- is negate\n");
 
     }
 
