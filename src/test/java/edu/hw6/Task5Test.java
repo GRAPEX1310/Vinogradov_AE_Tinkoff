@@ -19,4 +19,13 @@ public class Task5Test {
             assertThat(HackerNews.news(resultArray[index])).isNotNull();
         }
     }
+
+    @Test
+    @DisplayName("HackerNews news test")
+    void testNews() {
+
+        String result = HackerNews.news(37570037);
+
+        assertThat(result).isEqualTo("JDK 21 Release Notes");
+    }
 }

@@ -21,15 +21,20 @@ public class Task4 {
     private static final String ERROR_MESSAGE = "File not found";
     private static final Logger LOGGER = LogManager.getLogger();
 
+    @SuppressWarnings("NestedTryDepth")
     public static void outputStreamChain(String text) {
-        File file = new File("src/main/java/edu/hw6/Task4/Result.txt");
-        try (PrintWriter printWriter = new PrintWriter(
-                new OutputStreamWriter(
-                        new BufferedOutputStream(
-                                new CheckedOutputStream(
-                                        new FileOutputStream(file), new Adler32())), StandardCharsets.UTF_8))) {
-
-            printWriter.write(text);
+        File file = new File("src/main/resources/Result.txt");
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            try (CheckedOutputStream checkedOutputStream = new CheckedOutputStream(fileOutputStream, new Adler32())) {
+                try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(checkedOutputStream)) {
+                    try (OutputStreamWriter outputStreamWriter =
+                                 new OutputStreamWriter(bufferedOutputStream, StandardCharsets.UTF_8)) {
+                        try (PrintWriter printWriter = new PrintWriter(outputStreamWriter)) {
+                            printWriter.write(text);
+                        }
+                    }
+                }
+            }
         } catch (IOException e) {
             LOGGER.error(ERROR_MESSAGE);
         }

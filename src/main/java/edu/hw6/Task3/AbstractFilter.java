@@ -4,12 +4,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
 
 public interface AbstractFilter extends DirectoryStream.Filter<Path> {
-
-    default Task3.CompositeFilter and(AbstractFilter extraFilter) {
-        Task3.CompositeFilter compositeFilter = new Task3.CompositeFilter();
-        compositeFilter.previousFilters.add(extraFilter);
-        compositeFilter.previousFilters.add(this);
-
-        return compositeFilter;
+    default AbstractFilter and(AbstractFilter abstractFilter) {
+        return (t) -> accept(t) && abstractFilter.accept(t);
     }
 }

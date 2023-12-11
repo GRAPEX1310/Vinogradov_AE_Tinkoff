@@ -9,7 +9,7 @@ import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class Task3Test {
+public class CompositeFilterTest {
     TestLogger logger = TestLoggerFactory.getTestLogger(Task3.class);
 
 

@@ -2,6 +2,7 @@ package edu.hw6.Task2;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +47,17 @@ public class CloneFile {
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
+        }
+    }
+
+    public static void createFile(Path path) {
+        if (!Files.exists(path)) {
+            try {
+                Files.createFile(path);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

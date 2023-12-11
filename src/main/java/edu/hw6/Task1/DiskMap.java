@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -29,14 +27,12 @@ public class DiskMap implements Map<String, String> {
 
     private final Path filePath;
     private static final Logger LOGGER = LogManager.getLogger();
-    private final Pattern pairPattern = Pattern.compile("^(.*): (.*)$");
     private static final String OPENING_ERROR = "Error during file opening";
     private static final String READING_ERROR = "Error during file reading";
     private static final String WRITING_ERROR = "Error during file writing";
-    private static final String STORAGE_PATH = "src/main/java/edu/hw6/Task1/Map_Storage.txt";
 
-    public DiskMap() {
-        filePath = Paths.get(STORAGE_PATH);
+    public DiskMap(String path) {
+        filePath = Paths.get(path);
 
         try (OutputStream outputStream = new BufferedOutputStream(
                 Files.newOutputStream(filePath, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
@@ -195,9 +191,9 @@ public class DiskMap implements Map<String, String> {
 
             while ((entry = bufferedReader.readLine()) != null) {
 
-                Matcher matcher = pairPattern.matcher(entry);
-                if (matcher.find() && matcher.group(mode).equals(object)) {
-                    elements.add(new ImmutablePair<>(matcher.group(1), matcher.group(2)));
+                String[] pair = isValid(entry);
+                if (pair != null && pair[mode - 1].equals(object)) {
+                    elements.add(new ImmutablePair<>(pair[0], pair[1]));
                 }
             }
         } catch (IOException e) {
@@ -219,10 +215,9 @@ public class DiskMap implements Map<String, String> {
             String entry;
 
             while ((entry = bufferedReader.readLine()) != null) {
-                Matcher matcher = pairPattern.matcher(entry);
-
-                if (matcher.find()) {
-                    resultArray.add(new ImmutablePair<>(matcher.group(1), matcher.group(2)));
+                String[] pair = isValid(entry);
+                if (pair != null) {
+                    resultArray.add(new ImmutablePair<>(pair[0], pair[1]));
                 }
             }
         } catch (IOException e) {
@@ -246,6 +241,15 @@ public class DiskMap implements Map<String, String> {
             }
         } catch (IOException e) {
             LOGGER.error(WRITING_ERROR);
+        }
+    }
+
+    private String[] isValid(String data) {
+        String[] result = data.split(": ");
+        if (result.length == 2) {
+            return result;
+        } else {
+            return null;
         }
     }
 }

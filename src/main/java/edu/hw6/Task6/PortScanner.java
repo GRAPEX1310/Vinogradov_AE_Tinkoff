@@ -20,7 +20,7 @@ public class PortScanner {
     private static final String OPENING_ERROR = "Error during file opening";
     private static final String PARAMS_SEPARATOR = "  |  ";
     private static final String TABLE_DESCRIPTION = "PROTOCOL  |  PORT  |  SERVICE";
-    private static final String PORTS_FILEPATH = "src/main/java/edu/hw6/Task6/Ports.txt";
+    private static final String PORTS_FILEPATH = "src/main/resources/Ports.txt";
 
     private PortScanner() {
 

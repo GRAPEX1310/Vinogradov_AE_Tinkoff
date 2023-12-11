@@ -21,7 +21,7 @@ public class Task4Test {
 
         Task4.outputStreamChain(REFERENCE);
 
-        File file = new File("src/main/java/edu/hw6/Task4/Result.txt");
+        File file = new File("src/main/resources/Result.txt");
         assertThat(file.exists()).isEqualTo(true);
 
         String answer = null;

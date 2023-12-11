@@ -1,6 +1,6 @@
 package edu.hw6;
 
-import edu.hw6.Task3.Task3;
+import edu.hw6.Task3.CompositeFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,15 +16,15 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class Task3Test {
 
-    @Test
-    @DisplayName("Test AbstractFilter working")
-    void testAbstractFilter() {
-        Path dir = Paths.get("");
+    private static final Path dir = Paths.get("");
 
-        DirectoryStream.Filter<Path> pathFilter1 = Task3.isWritable()
-                .and(Task3.fileName("pom"))
-                .and(Task3.largerThan(1))
-                .and(Task3.lessThan(30000));
+    @Test
+    @DisplayName("First test AbstractFilter working")
+    void firstTestAbstractFilter() {
+        DirectoryStream.Filter<Path> pathFilter1 = CompositeFilter.IS_WRITABLE
+                .and(CompositeFilter.fileName("pom.xml"))
+                .and(CompositeFilter.largerThan(1))
+                .and(CompositeFilter.lessThan(30000));
 
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dir, pathFilter1)) {
             List<Path> pathList = new ArrayList<>();
@@ -32,12 +32,16 @@ public class Task3Test {
 
             assertThat(pathList.toArray().length).isEqualTo(1);
             assertThat(pathList.toArray()).contains(Paths.get("pom.xml"));
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
+    }
 
-        DirectoryStream.Filter<Path> pathFilter2 = Task3.isReadable()
-                .and(Task3.isRegular())
-                .and(Task3.globMatches("*.gitignore"));
+    @Test
+    @DisplayName("Second test AbstractFilter working")
+    void secondTestAbstractFilter() {
+        DirectoryStream.Filter<Path> pathFilter2 = CompositeFilter.IS_READABLE
+                .and(CompositeFilter.IS_REGULAR)
+                .and(CompositeFilter.globMatches(".gitignore"));
 
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dir, pathFilter2)) {
             List<Path> pathList = new ArrayList<>();
@@ -45,7 +49,7 @@ public class Task3Test {
 
             assertThat(pathList.toArray().length).isEqualTo(1);
             assertThat(pathList.toArray()).contains(Paths.get(".gitignore"));
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
     }
 }

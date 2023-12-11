@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class Task3Test {
+public class CompositeFilterTest {
 
     @Test
     @DisplayName("Тест программы 3")

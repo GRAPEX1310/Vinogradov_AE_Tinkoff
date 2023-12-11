@@ -1,6 +1,7 @@
 package edu.hw6;
 
 import edu.hw6.Task2.CloneFile;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ public class Task2Test {
 
         assertThat(new File(FIRST_FILE).exists()).isEqualTo(false);
 
-        CloneFile.cloneFile(Paths.get(FIRST_FILE));
+        CloneFile.createFile(Paths.get(FIRST_FILE));
         assertThat(new File(FIRST_FILE).exists()).isEqualTo(true);
 
         CloneFile.cloneFile(Paths.get(FIRST_FILE));
@@ -35,7 +36,7 @@ public class Task2Test {
 
         assertThat(new File(SECOND_FILE).exists()).isEqualTo(false);
 
-        CloneFile.cloneFile(Paths.get(SECOND_FILE));
+        CloneFile.createFile(Paths.get(SECOND_FILE));
         assertThat(new File(SECOND_FILE).exists()).isEqualTo(true);
 
         CloneFile.cloneFile(Paths.get(SECOND_FILE));
@@ -50,7 +51,8 @@ public class Task2Test {
         clear();
     }
 
-    private static void clear() {
+    @BeforeEach
+    public void clear() {
         File file = new File("file.txt");
         file.delete();
         file = new File("file - копия.txt");
@@ -67,9 +69,5 @@ public class Task2Test {
         file.delete();
         file = new File("file - копия(2)");
         file.delete();
-    }
-
-    public static void main(String[] args) {
-        clear();
     }
 }
