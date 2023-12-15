@@ -15,7 +15,7 @@ public class Task3Test {
 
     @Test
     @DisplayName("Checking TryExecute function efficiency")
-    void testTryConnection() {
+    public void testTryConnection() {
         for (int attempt = 0; attempt < 100; attempt++) {
             connectionTryTest();
         }
