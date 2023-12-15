@@ -1,11 +1,9 @@
 package edu.hw11;
 
-import edu.hw11.Task3.FibCalculator;
+import edu.hw11.Task3.FibAppender;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
-import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.MethodDelegation;
-import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Opcodes;
@@ -21,13 +19,13 @@ public class Task3Test {
     void testCodeGenerator()
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
-        FibCalculator fibCalculator = new FibCalculator();
+        FibAppender fibAppender = new FibAppender();
         Object object = new ByteBuddy()
                 .subclass(Object.class)
                 .name("FibCLass")
                 .defineMethod("fib", long.class, Opcodes.ACC_PUBLIC)
                 .withParameter(int.class, "number")
-                .intercept(MethodDelegation.to(fibCalculator))
+                .intercept(MethodDelegation.to(fibAppender))
                 .modifiers(Opcodes.ACC_PUBLIC)
                 .make()
                 .load(Task3Test.class.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)

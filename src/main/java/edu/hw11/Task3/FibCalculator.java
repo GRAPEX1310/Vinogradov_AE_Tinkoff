@@ -1,21 +1,26 @@
 package edu.hw11.Task3;
 
 public class FibCalculator {
-    public FibCalculator() {
+    private FibCalculator() {
     }
 
     @SuppressWarnings("MagicNumber")
-    public long fib(int number) {
-        if (number == 1 || number == 2) {
-            return 1;
+    public static long fib(int n) {
+        if (n == 0 || n == 1) {
+            return n;
         }
 
-        long[] fibonacciNumbers = new long[number + 1];
+        int a = 0;
+        int b = 1;
+        int i = 1;
 
-        for (int index = 2; index <= number; index++) {
-            fibonacciNumbers[index] = fibonacciNumbers[index - 1] + fibonacciNumbers[index - 2];
+        while (i != n) {
+            int temp = b;
+            b = a + b;
+            a = temp;
+            i++;
         }
 
-        return fibonacciNumbers[number];
+        return b;
     }
 }
