@@ -10,14 +10,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class DiskMap implements Map<String, String> {
 
     private final Path filePath;
+    private Map<String, String> cache;
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String OPENING_ERROR = "Error during file opening";
     private static final String READING_ERROR = "Error during file reading";
@@ -33,6 +29,7 @@ public class DiskMap implements Map<String, String> {
 
     public DiskMap(String path) {
         filePath = Paths.get(path);
+        cache = new HashMap<>();
 
         try (OutputStream outputStream = new BufferedOutputStream(
                 Files.newOutputStream(filePath, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
@@ -74,17 +71,7 @@ public class DiskMap implements Map<String, String> {
 
     @Override
     public String get(Object key) {
-        List<Pair<String, String>> elements = getElementsArray();
-
-        if (!elements.isEmpty()) {
-            for (Pair<String, String> element : elements) {
-                if (element.getLeft().equals(key)) {
-                    return element.getRight();
-                }
-            }
-        }
-
-        return null;
+        return cache.get(key);
     }
 
     @Nullable
@@ -93,43 +80,35 @@ public class DiskMap implements Map<String, String> {
         if (key == null || value == null || containsKey(key)) {
             return null;
         }
-
-        List<Pair<String, String>> elements = getElementsArray();
-        elements.add(new ImmutablePair<>(key, value));
-        elements.sort(Comparator.comparing(Pair::getLeft));
-        putElementsArray(elements);
-
+        cache.put(key, value);
+        putElements(cache);
         return null;
     }
 
     @Override
     public String remove(Object key) {
-        List<Pair<String, String>> elements = getElementsArray();
-
-        if (!elements.isEmpty()) {
-            putElementsArray(elements.stream().filter(element -> !element.getLeft().equals(key)).toList());
+        cache.remove(key);
+        if (!cache.isEmpty()) {
+            putElements(cache);
         }
         return null;
     }
 
     @Override
     public void putAll(@NotNull Map<? extends String, ? extends String> m) {
-        List<Pair<String, String>> elements = getElementsArray();
-
         for (var entry : m.entrySet()) {
             boolean correct = true;
 
-            for (Pair<String, String> element : elements) {
-                if (element.getLeft().equals(entry.getKey())) {
+            for (var element : cache.entrySet()) {
+                if (element.getKey().equals(entry.getKey())) {
                     correct = false;
                     break;
                 }
             }
 
             if (correct) {
-                elements.add(new ImmutablePair<>(entry.getKey(), entry.getValue()));
-                elements.sort(Comparator.comparing(Pair::getLeft));
-                putElementsArray(elements);
+                cache.put(entry.getKey(), entry.getValue());
+                putElements(cache);
             }
         }
     }
@@ -140,7 +119,7 @@ public class DiskMap implements Map<String, String> {
                 Files.newOutputStream(filePath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING))) {
 
             outputStream.write("".getBytes());
-
+            cache.clear();
         } catch (IOException e) {
             LOGGER.error(WRITING_ERROR);
         }
@@ -149,96 +128,49 @@ public class DiskMap implements Map<String, String> {
     @NotNull
     @Override
     public Set<String> keySet() {
-        List<Pair<String, String>> elements = getElementsArray();
-        Set<String> setOfKeys = new HashSet<>();
-
-        if (!elements.isEmpty()) {
-            for (Pair<String, String> element : elements) {
-                setOfKeys.add(element.getLeft());
-            }
-        }
-
-        return setOfKeys;
+        return cache.keySet();
     }
 
     @NotNull
     @Override
     public Collection<String> values() {
-        return Objects.requireNonNull(getElementsArray().stream().map(Pair::getRight)).toList();
+        Collection<String> valuesResult = new ArrayList<>();
+        for (var element : cache.entrySet()) {
+            valuesResult.add(element.getValue());
+        }
+        return valuesResult;
     }
 
     @NotNull
     @Override
     public Set<Entry<String, String>> entrySet() {
-        List<Pair<String, String>> elements = getElementsArray();
-        Set<Entry<String, String>> entriesSet = new HashSet<>();
-
-        if (!elements.isEmpty()) {
-            for (Pair<String, String> element : elements) {
-                entriesSet.add(new ImmutablePair<>(element.getLeft(), element.getRight()));
-            }
-        }
-
-        return entriesSet;
+        return cache.entrySet();
     }
 
     private boolean isMapContains(Object object, int mode) {
-        boolean result = false;
-        List<Pair<String, String>> elements = new ArrayList<>();
-
-        try (BufferedReader bufferedReader = Files.newBufferedReader(filePath)) {
-            String entry;
-
-            while ((entry = bufferedReader.readLine()) != null) {
-
-                String[] pair = isValid(entry);
-                if (pair != null && pair[mode - 1].equals(object)) {
-                    elements.add(new ImmutablePair<>(pair[0], pair[1]));
-                }
-            }
-        } catch (IOException e) {
-            LOGGER.error(READING_ERROR);
+        if (object == null) {
+            return false;
+        } else if (mode == 1) {
+            return cache.containsKey(object);
+        } else {
+            return cache.containsValue(object);
         }
-
-        if (!elements.isEmpty()) {
-            result = true;
-        }
-
-        return result;
-
     }
 
-    private List<Pair<String, String>> getElementsArray() {
-        List<Pair<String, String>> resultArray = new ArrayList<>();
-
-        try (BufferedReader bufferedReader = Files.newBufferedReader(filePath)) {
-            String entry;
-
-            while ((entry = bufferedReader.readLine()) != null) {
-                String[] pair = isValid(entry);
-                if (pair != null) {
-                    resultArray.add(new ImmutablePair<>(pair[0], pair[1]));
-                }
-            }
-        } catch (IOException e) {
-            LOGGER.error(READING_ERROR);
-        }
-
-        return resultArray;
-    }
-
-    private void putElementsArray(List<Pair<String, String>> elementsArray) {
+    private void putElements(Map<String, String> elementsMap) {
         try (OutputStream outputStream = new BufferedOutputStream(
                 Files.newOutputStream(filePath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING))) {
 
             StringBuilder resultString = new StringBuilder();
-            for (Pair<String, String> elemetsPair : elementsArray) {
-                resultString.append(elemetsPair.getLeft()).append(": ")
-                        .append(elemetsPair.getRight()).append(System.lineSeparator());
+
+            for (var elementsPair : elementsMap.entrySet()) {
+                resultString.append(elementsPair.getKey()).append(": ")
+                        .append(elementsPair.getValue()).append(System.lineSeparator());
 
                 outputStream.write(resultString.toString().getBytes());
                 resultString.setLength(0);
             }
+            cache = elementsMap;
         } catch (IOException e) {
             LOGGER.error(WRITING_ERROR);
         }
