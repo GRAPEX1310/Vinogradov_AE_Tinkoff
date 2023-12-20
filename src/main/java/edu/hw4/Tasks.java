@@ -167,15 +167,16 @@ public class Tasks {
     //Task16
     public static List<TaskClasses.Animal> sortByTypeThenSexThenName(List<TaskClasses.Animal> givenList) {
         return givenList.stream().sorted(((o1, o2) -> {
-                    if (!o1.type().equals(o2.type())) {
-                        return o1.type().toString().compareTo(o2.type().toString());
-                    } else {
-                        if (!o1.sex().equals(o2.sex())) {
-                            return o1.sex().toString().compareTo(o2.sex().toString());
-                        } else {
-                            return o1.name().compareTo(o2.name());
-                    }
+
+            if (!o1.type().equals(o2.type())) {
+                return o1.type().toString().compareTo(o2.type().toString());
+            } else {
+                if (!o1.sex().equals(o2.sex())) {
+                    return o1.sex().toString().compareTo(o2.sex().toString());
+                } else {
+                    return o1.name().compareTo(o2.name());
                 }
+            }
         })).toList();
     }
 
@@ -246,7 +247,7 @@ public class Tasks {
             }
         }
 
-        return  errorsMap;
+        return errorsMap;
     }
 
     //Task20
