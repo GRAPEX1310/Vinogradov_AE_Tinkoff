@@ -1,5 +1,8 @@
 package edu.project3;
 
+import edu.project3.LogExecutors.LocalPathExecutor;
+import edu.project3.LogExecutors.LogExecutor;
+import edu.project3.LogExecutors.URLExecutor;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -42,18 +45,13 @@ public class LogAnalyzer {
     public void linksAnalysis(List<String> urlList, List<String> localPath) {
 
         for (String url: urlList) {
-            URLExecutor.checkLink(this, url);
+            LogExecutor urlExecutor = new URLExecutor();
+            urlExecutor.executeDataByPath(this, url);
         }
 
         for (String path: localPath) {
-            LocalPathExecutor.checkPath(this, path);
+            LogExecutor localPathExecutor = new LocalPathExecutor();
+            localPathExecutor.executeDataByPath(this, path);
         }
-
-        outputAnalysis();
-    }
-
-    private void outputAnalysis() {
-        StatisticOutput statisticOutput = new StatisticOutput(this);
-        statisticOutput.printData();
     }
 }

@@ -1,5 +1,6 @@
-package edu.project3;
+package edu.project3.PrintStatistic;
 
+import edu.project3.LogAnalyzer;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -8,10 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 
-public class StatisticOutput {
+public class MarkDownAndAdocOutput implements StatisticOutput {
 
     private final static String SEPARATOR = "|:---------------------:|--------------:|";
     private final static String SPECIFIC_OUTPUT_FORMAT = "|%-23s|%-15s|";
@@ -41,14 +43,16 @@ public class StatisticOutput {
     private final LogAnalyzer logAnalyzer;
     private final StringBuilder result;
 
-    public StatisticOutput(LogAnalyzer logAnalyzer) {
+    public MarkDownAndAdocOutput(LogAnalyzer logAnalyzer) {
         this.logAnalyzer = logAnalyzer;
         this.fileFormat = logAnalyzer.format;
         this.result = new StringBuilder();
     }
 
     @SuppressWarnings({"RegexpSinglelineJava"})
+    @Override
     public void printData() {
+        logAnalyzer.fileNames.sort(Comparator.naturalOrder());
         printMetric();
         printResources();
         printAgent();
@@ -57,15 +61,17 @@ public class StatisticOutput {
         System.out.println(result);
 
         if (fileFormat != null) {
-            printToFIle();
+            printToFile();
         }
     }
 
+    @Override
     public String getResultString() {
         return result.toString();
     }
 
-    private void printToFIle() {
+    @Override
+    public void printToFile() {
         try (OutputStream outputStream = new BufferedOutputStream(Files.newOutputStream(
                 Paths.get(FILENAME + fileFormat),
                 StandardOpenOption.CREATE,

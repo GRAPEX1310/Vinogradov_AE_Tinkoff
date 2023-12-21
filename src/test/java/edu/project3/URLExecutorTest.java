@@ -1,5 +1,7 @@
 package edu.project3;
 
+import edu.project3.LogExecutors.LogExecutor;
+import edu.project3.LogExecutors.URLExecutor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
@@ -13,8 +15,8 @@ public class URLExecutorTest {
     void urlCheckerTest() {
         LogAnalyzer logAnalyzer = new LogAnalyzer(LocalDate.of(2015, 6, 3),
                 LocalDate.of(2015, 6, 3), null);
-
-        URLExecutor.checkLink(logAnalyzer,
+        LogExecutor urlExecutor = new URLExecutor();
+        urlExecutor.executeDataByPath(logAnalyzer,
                 "https://raw.githubusercontent.com/elastic/examples/master/Common%20Data%20Formats/nginx_logs/nginx_logs");
 
         assertThat(logAnalyzer.requestCount.intValue()).isEqualTo(2816);
