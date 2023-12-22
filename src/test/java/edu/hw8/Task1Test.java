@@ -23,38 +23,39 @@ public class Task1Test {
 
         try {
             Thread serverThread = new Thread(() -> {
-                Server server  = new Server();
+                Server server = new Server();
                 server.start();
             });
-        serverThread.start();
-        Thread.sleep(1000);
+            serverThread.start();
+            Thread.sleep(1000);
 
-        List<Thread> requests = Stream.generate(() -> new Thread(() -> {
-            Client.makeRequest(stringList.get(ThreadLocalRandom.current().nextInt(7)));
+            List<Thread> requests = Stream.generate(() -> new Thread(() -> {
+                Client.makeRequest(stringList.get(ThreadLocalRandom.current().nextInt(7)));
 
-            Client.makeRequest(stringList.get(ThreadLocalRandom.current().nextInt(7)));
-        })).limit(10).toList();
+                Client.makeRequest(stringList.get(ThreadLocalRandom.current().nextInt(7)));
+            })).limit(10).toList();
 
-        for (var request : requests) {
-            request.start();
-            Thread.sleep(200);
-        }
+            for (var request : requests) {
+                request.start();
+                Thread.sleep(200);
+                assertThat(Client.getLastServerAnswer()).isNotNull();
+            }
 
-        for (var request : requests) {
+            for (var request : requests) {
+                try {
+                    request.join();
+                } catch (InterruptedException e) {
+                    ok = false;
+                }
+            }
+
+            Client.stopClient();
+
             try {
-                request.join();
+                serverThread.join();
             } catch (InterruptedException e) {
                 ok = false;
             }
-        }
-
-        Client.stopClient();
-
-        try {
-            serverThread.join();
-        } catch (InterruptedException e) {
-            ok = false;
-        }
 
         } catch (Exception e) {
             ok = false;

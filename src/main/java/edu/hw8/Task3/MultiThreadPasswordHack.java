@@ -5,11 +5,13 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Stream;
 
 public class MultiThreadPasswordHack implements PasswordHack {
 
@@ -40,52 +42,55 @@ public class MultiThreadPasswordHack implements PasswordHack {
     public Map<String, String> nextPassword(int maxLength) {
         passwords.add("");
 
-        for (int threadAmount = 0; threadAmount < THREADS_AMOUNT; threadAmount++) {
-            Thread thread = new Thread(() -> {
+        Thread[] threads = Stream.generate(() -> new Thread(() -> {
 
-                while (!hashedPasswords.isEmpty() && !passwords.isEmpty()) {
-                    String currentPassword = null;
-                    lock.readLock().lock();
-                    try {
-                        currentPassword = passwords.poll();
-                    } finally {
-                        lock.readLock().unlock();
-                    }
-
-                    if (currentPassword == null) {
-                        continue;
-                    }
-
-                    try {
-                        String currentHash = (new BigInteger(1,
-                                md5.digest(currentPassword.getBytes(StandardCharsets.UTF_8)))).toString(MD5_ENCODE);
-
+                    while (!hashedPasswords.isEmpty() && !passwords.isEmpty()) {
+                        String currentPassword = null;
                         lock.writeLock().lock();
                         try {
-
-                            if (hashedPasswords.containsKey(currentHash)) {
-                                resultPasswords.put(currentPassword, hashedPasswords.get(currentHash));
-                                hashedPasswords.remove(currentHash);
-                            }
+                            currentPassword = passwords.poll();
                         } finally {
                             lock.writeLock().unlock();
                         }
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+
+                        if (currentPassword == null) {
+                            continue;
+                        }
+
+                        try {
+                            String currentHash = (new BigInteger(1,
+                                    md5.digest(currentPassword.getBytes(StandardCharsets.UTF_8)))).toString(MD5_ENCODE);
+
+                            lock.writeLock().lock();
+                            try {
+
+                                if (hashedPasswords.containsKey(currentHash)) {
+                                    resultPasswords.put(currentPassword, hashedPasswords.get(currentHash));
+                                    hashedPasswords.remove(currentHash);
+                                }
+                            } finally {
+                                lock.writeLock().unlock();
+                            }
+                        } catch (Exception e) {
+                            Thread.currentThread().interrupt();
+                        }
+
+                        passwordGenerator(currentPassword, maxLength);
                     }
+                }))
+                .limit(THREADS_AMOUNT)
+                .toArray(Thread[]::new);
 
-                    passwordGenerator(currentPassword, maxLength);
-                }
-            });
+        Arrays.stream(threads).forEach(Thread::start);
 
-            thread.start();
-
+        for (int i = 0; i < THREADS_AMOUNT; i++) {
             try {
-                thread.join();
+                threads[i].join();
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                threads[i].interrupt();
             }
         }
+
         passwords.clear();
         return resultPasswords;
     }

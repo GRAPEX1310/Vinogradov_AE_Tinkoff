@@ -1,50 +1,51 @@
 package edu.hw8.Task2;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Arrays;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.stream.Stream;
 
 public class FixedThreadPool implements ThreadPool {
-    private static final Queue<Runnable> TASKS = new ArrayDeque<>();
 
-    private static int threadsAmount;
-    private static final AtomicBoolean IS_CLOSED = new AtomicBoolean(true);
+    private BlockingQueue<Runnable> blockingQueue;
+    private Thread[] threads;
+
+    public FixedThreadPool(int threadsCount) {
+        create(threadsCount);
+    }
+
+    private void create(int threadsCount) {
+        blockingQueue = new LinkedBlockingDeque<>(threadsCount);
+        threads = Stream.generate(() -> new Thread(() -> {
+                    while (true) {
+                        try {
+                            Runnable task = blockingQueue.take();
+                            task.run();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                }))
+                .limit(threadsCount)
+                .toArray(Thread[]::new);
+    }
 
     @Override
     public void start() {
-        for (int index = 0; index < threadsAmount; index++) {
-            PersonalThread thread = new PersonalThread(this);
-            thread.start();
-        }
+        Arrays.stream(threads).forEach(Thread::start);
     }
 
     @Override
     public void execute(Runnable runnable) {
-        if (!IS_CLOSED.get()) {
-            TASKS.add(runnable);
+        try {
+            blockingQueue.put(runnable);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public synchronized void close() throws Exception {
-        IS_CLOSED.set(true);
-        TASKS.clear();
-    }
-
-    public void create(int threadsAmount) {
-        FixedThreadPool.threadsAmount = threadsAmount;
-        FixedThreadPool.IS_CLOSED.set(false);
-    }
-
-    public boolean allTasksCompleted() {
-        return TASKS.isEmpty();
-    }
-
-    public synchronized boolean isClosed() {
-        return IS_CLOSED.get();
-    }
-
-    public Runnable getTask() {
-        return TASKS.poll();
+    public void close() throws Exception {
+        Arrays.stream(threads).forEach(Thread::interrupt);
     }
 }

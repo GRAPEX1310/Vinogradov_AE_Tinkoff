@@ -18,6 +18,7 @@ public class Client {
     private static final String STOP = "/stop";
     private static final String ERROR = "Problems with request!";
 
+    private static String lastServerAnswer = null;
 
     public static void makeRequest(String message) {
         try (Socket socket = new Socket("127.0.0.1", PORT)) {
@@ -27,19 +28,25 @@ public class Client {
 
                     printWriter.println(message);
                     printWriter.flush();
+                    lastServerAnswer = null;
 
                     if (!message.equals(STOP)) {
-                        LOGGER.info(bufferedReader.readLine());
+                        String currentMessage = bufferedReader.readLine();
+                        LOGGER.info(currentMessage);
+                        lastServerAnswer = currentMessage;
                     }
                 }
             }
         } catch (IOException exception) {
             LOGGER.error(ERROR);
-            throw new RuntimeException();
         }
     }
 
     public static void stopClient() {
         makeRequest(STOP);
+    }
+
+    public static String getLastServerAnswer() {
+        return lastServerAnswer;
     }
 }
