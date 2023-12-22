@@ -8,8 +8,8 @@ public class LinearMonteCarloAlgorithm {
     private LinearMonteCarloAlgorithm() {
     }
 
-    private static final int PARAM_1 = 4;
-    private static final double PARAM_2 = 1.0;
+    private static final int FIRST_MULTIPLIER_OF_PI = 4;
+    private static final double SECOND_MULTIPLIER_OF_PI = 1.0;
 
     private static long resultTime;
     private static double piResult;
@@ -33,7 +33,7 @@ public class LinearMonteCarloAlgorithm {
 
         resultTime = System.currentTimeMillis() - startTime;
 
-        piResult = PARAM_1 * (PARAM_2 * circleCounter / totalCounter);
+        piResult = FIRST_MULTIPLIER_OF_PI * (SECOND_MULTIPLIER_OF_PI * circleCounter / totalCounter);
     }
 
     public static double getPiResult() {

@@ -12,8 +12,8 @@ public class MultiThreadingMonteCarloAlgorithm {
     private MultiThreadingMonteCarloAlgorithm() {
     }
 
-    private static final int PARAM_1 = 4;
-    private static final double PARAM_2 = 1.0;
+    private static final int FIRST_MULTIPLIER_OF_PI = 4;
+    private static final double SECOND_MULTIPLIER_OF_PI = 1.0;
 
     private static AtomicInteger totalCounter = new AtomicInteger(0);
     private static AtomicInteger circleCounter = new AtomicInteger(0);
@@ -59,7 +59,8 @@ public class MultiThreadingMonteCarloAlgorithm {
 
         resultTime = System.currentTimeMillis() - startTime;
 
-        piResult = PARAM_1 * (PARAM_2 * circleCounter.intValue() / totalCounter.intValue());
+        piResult = FIRST_MULTIPLIER_OF_PI
+                * (SECOND_MULTIPLIER_OF_PI * circleCounter.intValue() / totalCounter.intValue());
     }
 
     private static Thread getExecutorThread(int iterations) {

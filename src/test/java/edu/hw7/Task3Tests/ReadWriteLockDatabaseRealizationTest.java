@@ -13,7 +13,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class ReadWriteLockDatabaseRealizationTest {
 
-    public static PersonDatabase personDatabase;
+    private PersonDatabase personDatabase;
 
     @BeforeEach
     void refreshStorage() {
