@@ -1,56 +1,76 @@
 package edu.hw9;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import edu.hw9.Task2.DirectoriesSearcher;
+import edu.hw9.Task2.SpecialFileSearcher;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
-import org.apache.commons.io.FilenameUtils;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ThreadLocalRandom;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class Task2Test {
 
-    @Test
-    @DisplayName("Check directory search")
-    void testDirectorySearch() {
-        List<File> files = TreeSearchMultiThreadEngine.searchDirectories(Paths.get("src"), 3);
+    public Task2Test() throws IOException {
+    }
 
-        assertThat(!files.isEmpty()).isTrue();
+    private static Path testPath = Path.of("src/test/java/edu/hw9/dirs");
+    private Path tempDirectory = Files.createTempDirectory(testPath, "new_dir");
 
-        for (int i = 0; i < files.size(); i++) {
-            for (int j = i + 1; j < files.size(); j++) {
-                assertThat(files.get(i).equals(files.get(j))).isFalse();
+    private List<String> extensions = List.of(".txt", ".doc", ".json");
+
+    private void createTempDirectories(Path tempDirectory, int depth) throws IOException {
+        if (depth < 3) {
+            Path temp = tempDirectory;
+            for (int i = 0; i < 2000; ++i) {
+                if (ThreadLocalRandom.current().nextInt(1000) == 999) {
+                    temp = Files.createTempDirectory(temp, "dir_" + i);
+                    depth++;
+                    createTempDirectories(temp, depth);
+                } else {
+                    File.createTempFile("00_" + i, extensions.get(ThreadLocalRandom.current()
+                            .nextInt(3)), temp.toFile()).deleteOnExit();
+                }
             }
         }
     }
 
     @Test
-    @DisplayName("Check files search")
-    void testFileSearch() {
+    @DisplayName("Check DirectorySearcher work")
+    void testDirectorySearcher() throws IOException {
+        createTempDirectories(tempDirectory, 0);
+        List<Path> result = new ArrayList<>();
 
-        Predicate<File> predicate = new Predicate<File>() {
-            @Override
-            public boolean test(File file) {
-                try {
-                    return Files.size(file.toPath()) >= 2500 && FilenameUtils.getExtension(file.getName()).equals("java");
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        };
+        DirectoriesSearcher directoriesSearcher = new DirectoriesSearcher(testPath, result);
 
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+        forkJoinPool.invoke(directoriesSearcher);
 
-        List<File> files = TreeSearchMultiThreadEngine.searchFiles(Paths.get("src"), predicate);
+        assertThat(result).isNotEmpty();
+        forkJoinPool.close();
+    }
 
-        assertThat(!files.isEmpty()).isTrue();
+    @Test
+    @DisplayName("Check SpecialFilesSearcher work")
+    void testSpecialFilesSearcher() throws IOException {
+        createTempDirectories(tempDirectory, 2);
 
-        for (var file : files) {
-            assertThat(predicate.test(file)).isTrue();
-        }
+        List<Path> result = new ArrayList<>();
+        int size = 512;
+
+        String extension = "txt";
+        SpecialFileSearcher specialFileSearcher = new SpecialFileSearcher(size, extension, result, testPath);
+
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+        forkJoinPool.invoke(specialFileSearcher);
+
+        assertThat(result).isNotEmpty();
+        forkJoinPool.close();
     }
 }

@@ -1,15 +1,15 @@
 package edu.hw9;
 
-import edu.hw9.Task1.StatsCollector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class Task1Test {
 
@@ -17,36 +17,26 @@ public class Task1Test {
 
     @Test
     @DisplayName("Check StatsCollector work")
-    void testStatsCollector() {
+    void testStatsCollector() throws InterruptedException {
+        StatsCollector collector = new StatsCollector();
 
-        List<String> metricNames = List.of("a", "b", "c", "d", "e", "f");
+        ExecutorService executorService = Executors.newFixedThreadPool(6);
+        var futures = Stream.generate(() -> CompletableFuture.runAsync(() -> {
+            collector.push("metric_name", new double[]{0.1, 0.05, 1.4, 5.1, 0.3});
+        }, executorService)).limit(100).toArray(CompletableFuture[]::new);
+        CompletableFuture.allOf(futures).join();
+        executorService.close();
 
-        int size = 4;
-        int metricsAmount = 10;
-        StatsCollector collector = new StatsCollector(size);
+        Thread.sleep(100);
 
-        var send = Stream.generate(() -> CompletableFuture.runAsync(() ->
-                        collector.push(
-                                metricNames.get(ThreadLocalRandom.current().nextInt(metricNames.size())),
-                                new double[] {ThreadLocalRandom.current().nextDouble(-5, 5),
-                                        ThreadLocalRandom.current().nextDouble(-5, 5),
-                                        ThreadLocalRandom.current().nextDouble(-5, 5),
-                                        ThreadLocalRandom.current().nextDouble(-5, 5)}
-                        ), Executors.newFixedThreadPool(size)))
-                .limit(metricsAmount)
-                .toArray(CompletableFuture[]::new);
+        var metrics = collector.stats();
+        for (var metric : metrics) {
+            LOGGER.info(metric.getKey() + Math.round(metric.getValue() * 100) / 100.0);
+        }
 
-        LOGGER.info("metricName     valuesSum       averageValue        maxValue        minValue\n");
-        var answer = Stream.generate(() -> CompletableFuture.runAsync(
-                        () ->
-                                LOGGER.info(collector.stats()),
-                        Executors.newFixedThreadPool(size)
-                ))
-                .limit(metricsAmount)
-                .toArray(CompletableFuture[]::new);
-
-        CompletableFuture.allOf(send).join();
-        CompletableFuture.allOf(answer).join();
-
+        assertThat(Math.round(metrics.get(0).getValue())).isEqualTo(695);
+        assertThat(Math.round(metrics.get(1).getValue() * 100) / 100.0).isEqualTo(1.39);
+        assertThat(metrics.get(2).getValue()).isEqualTo(0.05);
+        assertThat(metrics.get(3).getValue()).isEqualTo(5.1);
     }
 }
