@@ -19,6 +19,11 @@ public class Task1Test {
             MyClass object1 = (MyClass) randomObjectGenerator.nextObject(MyClass.class);
             MyClass object2 = (MyClass) randomObjectGenerator.nextObject(MyClass.class, "create");
 
+            assertThat(object1.getX()).isLessThanOrEqualTo(100);
+            assertThat(object2.getX()).isGreaterThanOrEqualTo(0);
+
+            assertThat(object1.getString()).isNotNull();
+
             assertThat(object1).isNotNull();
             assertThat(object2).isNotNull();
             assertThat(object1).isNotEqualTo(object2);
@@ -31,6 +36,11 @@ public class Task1Test {
         for (int i = 0 ; i < 10;i++) {
             MyRecord object1 = (MyRecord) randomObjectGenerator.nextObject(MyRecord.class);
             MyRecord object2 = (MyRecord) randomObjectGenerator.nextObject(MyRecord.class);
+
+            assertThat(object1.x()).isGreaterThanOrEqualTo(0);
+            assertThat(object2.x()).isGreaterThanOrEqualTo(0);
+            assertThat(object1.string()).isNotNull();
+            assertThat(object2.string()).isNotNull();
 
             assertThat(object1).isNotNull();
             assertThat(object2).isNotNull();

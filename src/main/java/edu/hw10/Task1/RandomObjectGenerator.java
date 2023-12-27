@@ -8,7 +8,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Random;
 
 public class RandomObjectGenerator {
@@ -50,7 +53,18 @@ public class RandomObjectGenerator {
             }
 
             Constructor<?>[] constructors = currentClass.getConstructors();
-            Constructor<?> constructor = constructors[random.nextInt(0, constructors.length)];
+            var maxParamConstructor = Arrays.stream(constructors)
+                    .max((c1, c2) -> Integer.compare(c2.getParameterCount(), c1.getParameterCount()))
+                    .map(Optional::of).orElseThrow(NoSuchElementException::new);
+
+            Constructor<?> constructor;
+
+            if (maxParamConstructor.isEmpty()) {
+                constructor = constructors[random.nextInt(0, constructors.length)];
+            } else {
+                constructor = maxParamConstructor.get();
+            }
+
             Parameter[] parameterTypes = constructor.getParameters();
 
             return constructor.newInstance(generateRandomParameters(parameterTypes, currentClass).toArray());
@@ -62,7 +76,7 @@ public class RandomObjectGenerator {
     public Object nextObject(Class<?> currentClass, String methodName) {
         try {
             Method fabricMethod = currentClass.getMethod(methodName,
-                    new Class<?>[] {int.class, String.class, Boolean.class});
+                    new Class<?>[]{int.class, String.class, Boolean.class});
             Parameter[] parametersTypes = fabricMethod.getParameters();
 
             return fabricMethod.invoke(null, generateRandomParameters(parametersTypes, currentClass).toArray());
@@ -78,13 +92,13 @@ public class RandomObjectGenerator {
         for (var parameterType : parametersTypes) {
             Annotation[] annotations = currentClass.getDeclaredField(parameterType.getName()).getAnnotations();
 
-            boolean isNull = false;
+            boolean notNull = false;
             int start = MIN_VALUE;
             int end = MAX_VALUE;
 
             for (var annotation : annotations) {
                 if (annotation.annotationType().equals(NotNull.class)) {
-                    isNull = true;
+                    notNull = true;
                 } else if (annotation.annotationType().equals(Min.class)) {
                     Min minAnnotation = (Min) annotation;
                     start = (int) minAnnotation.value();
@@ -94,14 +108,14 @@ public class RandomObjectGenerator {
                 }
             }
 
-            parameters.add(getRandomValue((Class<?>) parameterType.getParameterizedType(), isNull, start, end));
+            parameters.add(getRandomValue((Class<?>) parameterType.getParameterizedType(), notNull, start, end));
         }
 
         return parameters;
     }
 
     @SuppressWarnings("CyclomaticComplexity")
-    private Object getRandomValue(Class<?> type, boolean isNull, int start, int end) {
+    private Object getRandomValue(Class<?> type, boolean notNull, int start, int end) {
         Object result;
         Random random = new Random();
 
@@ -111,7 +125,7 @@ public class RandomObjectGenerator {
             }
 
             case INTEGER_CLASSNAME, LONG_CLASSNAME -> {
-                if (isNull && random.nextBoolean()) {
+                if (!notNull && random.nextBoolean()) {
                     result = null;
                 } else {
                     result = random.nextInt(start, end);
@@ -123,7 +137,7 @@ public class RandomObjectGenerator {
             }
 
             case CHARACTER_CLASSNAME -> {
-                if (isNull && random.nextBoolean()) {
+                if (!notNull && random.nextBoolean()) {
                     result = null;
                 } else {
                     result = (char) random.nextInt(start, end);
@@ -135,7 +149,7 @@ public class RandomObjectGenerator {
             }
 
             case FLOAT_CLASSNAME -> {
-                if (isNull && random.nextBoolean()) {
+                if (!notNull && random.nextBoolean()) {
                     result = null;
                 } else {
                     result = random.nextFloat(start, end);
@@ -147,7 +161,7 @@ public class RandomObjectGenerator {
             }
 
             case DOUBLE_CLASSNAME -> {
-                if (isNull && random.nextBoolean()) {
+                if (!notNull && random.nextBoolean()) {
                     result = null;
                 } else {
                     result = random.nextDouble(start, end);
@@ -159,7 +173,7 @@ public class RandomObjectGenerator {
             }
 
             case BOOLEAN_CLASSNAME -> {
-                if (isNull && random.nextBoolean()) {
+                if (!notNull && random.nextBoolean()) {
                     result = null;
                 } else {
                     result = random.nextBoolean();
@@ -167,7 +181,7 @@ public class RandomObjectGenerator {
             }
 
             case STRING_CLASSNAME -> {
-                if (isNull && random.nextBoolean()) {
+                if (!notNull && random.nextBoolean()) {
                     result = null;
                 } else {
                     int len = random.nextInt(0, end);

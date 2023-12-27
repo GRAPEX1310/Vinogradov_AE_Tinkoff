@@ -19,12 +19,20 @@ public class MyClass implements MyInterface {
         this.correct = correct;
     }
 
-    public static MyClass create(@Min(5) int x, String string, @NotNull Boolean correct) {
+    public static MyClass create(@Min(0) int x, String string, @NotNull Boolean correct) {
         return new MyClass(x, string, correct);
     }
 
+    public int getX() {
+        return x;
+    }
+
     @Override
-    public String getStr() {
+    public String getString() {
         return string;
+    }
+
+    public Boolean getCorrect() {
+        return correct;
     }
 }
