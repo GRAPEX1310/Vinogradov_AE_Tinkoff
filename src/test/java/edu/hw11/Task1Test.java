@@ -1,5 +1,9 @@
 package edu.hw11;
 
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.implementation.FixedValue;
+import net.bytebuddy.matcher.ElementMatchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -9,19 +13,18 @@ public class Task1Test {
 
     @Test
     @DisplayName("ByteBuddy override toString test")
-    void testToStringOverride() {
+    void testToStringOverride() throws InstantiationException, IllegalAccessException {
 
-        boolean correct = false;
-        String result = "";
-        try {
-            correct = true;
-            result = Task1.overrideToStringMethod();
-        } catch (Exception e) {
-            correct = false;
-        }
+        DynamicType.Unloaded unloadedType = new ByteBuddy()
+                .subclass(Object.class)
+                .method(ElementMatchers.isToString())
+                .intercept(FixedValue.value("Hello, ByteBuddy!"))
+                .make();
 
-        assertThat(correct).isTrue();
+        Class<?> dynamicType = unloadedType.load(unloadedType.getClass()
+                        .getClassLoader())
+                .getLoaded();
 
-        assertThat(result).isEqualTo("Hello, ByteBuddy!");
+        assertThat(dynamicType.newInstance().toString()).isEqualTo("Hello, ByteBuddy!");
     }
 }

@@ -14,23 +14,24 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class Task2Test {
 
-    //Test will pass, but GitHubActions will not miss this
-//    @Test
-//    @DisplayName("Changing the behavior of object in runtime test")
-//    void testChangingBehavior() {
-//        int value1 = 3;
-//        int value2 = 5;
-//
-//        ByteBuddyAgent.install();
-//        new ByteBuddy().redefine(ArithmeticUtils.class)
-//                .method(named("sum"))
-//                .intercept(MethodDelegation.to(ArithmeticUtilsDelegate.class)).make()
-//                .load(
-//                        ArithmeticUtils.class.getClassLoader(),
-//                        ClassReloadingStrategy.fromInstalledAgent()
-//                );
-//
-//
-//        assertThat(ArithmeticUtils.sum(value1, value2)).isEqualTo(15);
-//    }
+    @Test
+    @DisplayName("Changing the behavior of object in runtime test")
+    void testChangingBehavior() {
+        int value1 = 3;
+        int value2 = 5;
+
+        assertThat(ArithmeticUtils.sum(value1, value2)).isEqualTo(8);
+
+        ByteBuddyAgent.install();
+        new ByteBuddy().redefine(ArithmeticUtils.class)
+                .method(named("sum"))
+                .intercept(MethodDelegation.to(ArithmeticUtilsDelegate.class)).make()
+                .load(
+                        ArithmeticUtils.class.getClassLoader(),
+                        ClassReloadingStrategy.fromInstalledAgent()
+                );
+
+
+        assertThat(ArithmeticUtils.sum(value1, value2)).isEqualTo(15);
+    }
 }
